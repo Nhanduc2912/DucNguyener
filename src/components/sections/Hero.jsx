@@ -99,7 +99,7 @@ export default function Hero() {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.25, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              style={{ flexShrink: 0 }}
+              style={{ flexShrink: 0, position: "relative" }}
             >
               <div className="avatar-wrapper">
                 <div className="avatar-ring" />

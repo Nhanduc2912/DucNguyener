@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { useFrame, Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -172,15 +172,15 @@ function AnimeHead({ mousePos }) {
 export default function AnimeAvatar({ mousePos }) {
   return (
     <Canvas
-      camera={{ position: [0, 0, 2.2], fov: 50 }}
+      camera={{ position: [0, 0.05, 3.1], fov: 42 }}
       style={{ background: "transparent", width: "100%", height: "100%" }}
       gl={{ alpha: true, antialias: true }}
     >
-      {/* Lighting */}
-      <ambientLight intensity={1.2} />
-      <directionalLight position={[3, 4, 5]} intensity={1.8} color="#ffffff" />
-      <directionalLight position={[-3, 2, 2]} intensity={0.6} color="#c7d2fe" />
-      <pointLight position={[0, 3, 3]} intensity={0.8} color="#bae6fd" />
+      {/* Neutral white lighting — no colored tint */}
+      <ambientLight intensity={1.8} />
+      <directionalLight position={[3, 4, 5]} intensity={1.6} color="#ffffff" />
+      <directionalLight position={[-3, 2, 2]} intensity={0.8} color="#ffffff" />
+      <pointLight position={[0, 2, 3]} intensity={0.5} color="#ffffff" />
 
       <AnimeHead mousePos={mousePos} />
     </Canvas>
