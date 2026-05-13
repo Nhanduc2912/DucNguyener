@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLenis } from "./hooks/useLenis";
 import { NAV_LINKS } from "./data/portfolio";
@@ -15,29 +15,47 @@ import Projects from "./components/sections/Projects";
 import Certificates from "./components/sections/Certificates";
 import Contact from "./components/sections/Contact";
 
-// Global scroll reveal — rerun whenever DOM changes
-function useGlobalScrollReveal() {
+// Scroll reveal: add AND remove .visible so animation replays on scroll back
+function useScrollReveal() {
   useEffect(() => {
-    const run = () => {
+    let rafId;
+    const revealEls = () => {
       const els = document.querySelectorAll(".sr, .sr-left, .sr-right");
       const obs = new IntersectionObserver(
-        (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
-        { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            } else {
+              // Remove so animation replays when scrolling back
+              entry.target.classList.remove("visible");
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
       );
       els.forEach((el) => obs.observe(el));
       return obs;
     };
 
-    const obs = run();
+    // Initial setup
+    let obs = revealEls();
 
-    // Re-observe after any new elements (e.g. lazy 3D loads)
+    // Re-observe after lazy-loaded components mount
     const mutObs = new MutationObserver(() => {
-      obs.disconnect();
-      const newObs = run();
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        obs.disconnect();
+        obs = revealEls();
+      });
     });
     mutObs.observe(document.body, { childList: true, subtree: true });
 
-    return () => { obs.disconnect(); mutObs.disconnect(); };
+    return () => {
+      obs.disconnect();
+      mutObs.disconnect();
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 }
 
@@ -46,16 +64,24 @@ export default function App() {
   const [activeLink, setActiveLink] = useState("#about");
 
   useLenis();
-  useGlobalScrollReveal();
+  useScrollReveal();
 
+  // Active nav tracking (debounced)
   useEffect(() => {
+    let ticking = false;
     const fn = () => {
-      for (const { href } of [...NAV_LINKS].reverse()) {
-        const el = document.querySelector(href);
-        if (el && window.scrollY >= el.offsetTop - 160) {
-          setActiveLink(href);
-          break;
-        }
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          for (const { href } of [...NAV_LINKS].reverse()) {
+            const el = document.querySelector(href);
+            if (el && window.scrollY >= el.offsetTop - 160) {
+              setActiveLink(href);
+              break;
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
     window.addEventListener("scroll", fn, { passive: true });

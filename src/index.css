@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
+/* Performance: only composite layer animations */
+* { -webkit-tap-highlight-color: transparent; }
+
 :root {
   --bg: #ffffff;
   --bg-2: #f8f8f8;
@@ -24,14 +27,25 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 body {
   font-family: var(--font-main);
   background: var(--bg);
   color: var(--text-1);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   cursor: none;
+  /* Scroll snap: each section is a full page */
+  scroll-snap-type: y proximity;
+}
+
+/* Each section snaps to top */
+.section, .hero-section, .contact-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
 }
 img { display: block; max-width: 100%; }
 a { text-decoration: none; color: inherit; }
@@ -130,9 +144,9 @@ a { text-decoration: none; color: inherit; }
 
 /* AVATAR */
 .avatar-wrapper { position: relative; width: 320px; height: 320px; flex-shrink: 0; }
-.avatar-ring { position: absolute; inset: -3px; border-radius: 50%; background: conic-gradient(from 0deg, #0a0a0a, #888, #ddd, #0a0a0a); animation: spin 8s linear infinite; opacity: 0.5; }
+.avatar-ring { position: absolute; inset: -3px; border-radius: 50%; background: conic-gradient(from 0deg, #0a0a0a, #888, #ddd, #0a0a0a); animation: spin 8s linear infinite; opacity: 0.5; will-change: transform; }
 .avatar-bg { position: absolute; inset: 2px; border-radius: 50%; background: #fff; z-index: 1; }
-.avatar-canvas { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: linear-gradient(145deg, #f0f0f0, #e8e8e8); position: relative; z-index: 2; }
+.avatar-canvas { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: linear-gradient(145deg, #f0f0f0, #e8e8e8); position: relative; z-index: 2; contain: layout paint; }
 @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
 /* TIMELINE */
@@ -171,14 +185,30 @@ a { text-decoration: none; color: inherit; }
 /* CONTACT */
 .contact-section { background: #0a0a0a; color: #fff; }
 
-/* SCROLL REVEAL */
-.sr { opacity: 0; transform: translateY(48px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+/* SCROLL REVEAL — uses will-change for GPU composite */
+.sr {
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+  will-change: opacity, transform;
+}
 .sr.visible { opacity: 1; transform: translateY(0); }
-.sr-left { opacity: 0; transform: translateX(-56px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+.sr-left {
+  opacity: 0; transform: translateX(-52px);
+  transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+  will-change: opacity, transform;
+}
 .sr-left.visible { opacity: 1; transform: translateX(0); }
-.sr-right { opacity: 0; transform: translateX(56px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+.sr-right {
+  opacity: 0; transform: translateX(52px);
+  transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+  will-change: opacity, transform;
+}
 .sr-right.visible { opacity: 1; transform: translateX(0); }
-.sr-d1{transition-delay:.1s} .sr-d2{transition-delay:.18s} .sr-d3{transition-delay:.26s} .sr-d4{transition-delay:.34s} .sr-d5{transition-delay:.42s}
+.sr-d1{transition-delay:.08s} .sr-d2{transition-delay:.16s} .sr-d3{transition-delay:.24s} .sr-d4{transition-delay:.32s} .sr-d5{transition-delay:.4s}
+
+/* Clean up will-change after animation to free memory */
+.sr.visible, .sr-left.visible, .sr-right.visible { will-change: auto; }
 
 /* LOADING */
 .loading-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; }

@@ -46,11 +46,6 @@ export default function Navbar({ active }) {
               {link.label}
             </a>
           ))}
-          <a href={PERSONAL.cv} target="_blank" rel="noreferrer"
-            className="btn btn-dark"
-            style={{ padding: "0.45rem 1.1rem", fontSize: "0.82rem", marginLeft: "0.5rem" }}>
-            Tải CV
-          </a>
         </div>
 
         {/* Mobile toggle */}
@@ -94,10 +89,6 @@ export default function Navbar({ active }) {
                 {link.label}
               </a>
             ))}
-            <a href={PERSONAL.cv} target="_blank" rel="noreferrer"
-              className="btn btn-dark" style={{ justifyContent: "center", marginTop: "0.4rem" }}>
-              Tải CV
-            </a>
           </motion.div>
         )}
       </AnimatePresence>
