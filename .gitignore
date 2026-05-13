@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Temp scripts
+commit_all.bat
+*.bat
+
+# System / AI agent files
+.gemini/
