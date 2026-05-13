@@ -15,60 +15,69 @@ import Projects from "./components/sections/Projects";
 import Certificates from "./components/sections/Certificates";
 import Contact from "./components/sections/Contact";
 
-// Page transition wrapper
-const pageVariants = {
-  initial: { opacity: 0 },
-  enter: { opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
-  exit: { opacity: 0, transition: { duration: 0.3, ease: "easeIn" } },
-};
+// Global scroll reveal — rerun whenever DOM changes
+function useGlobalScrollReveal() {
+  useEffect(() => {
+    const run = () => {
+      const els = document.querySelectorAll(".sr, .sr-left, .sr-right");
+      const obs = new IntersectionObserver(
+        (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
+        { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
+      );
+      els.forEach((el) => obs.observe(el));
+      return obs;
+    };
+
+    const obs = run();
+
+    // Re-observe after any new elements (e.g. lazy 3D loads)
+    const mutObs = new MutationObserver(() => {
+      obs.disconnect();
+      const newObs = run();
+    });
+    mutObs.observe(document.body, { childList: true, subtree: true });
+
+    return () => { obs.disconnect(); mutObs.disconnect(); };
+  }, []);
+}
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [activeLink, setActiveLink] = useState("#about");
 
-  // Smooth scroll
   useLenis();
+  useGlobalScrollReveal();
 
-  // Active section detection
   useEffect(() => {
-    const onScroll = () => {
-      const sections = NAV_LINKS.map((l) => l.href);
-      for (const id of [...sections].reverse()) {
-        const el = document.querySelector(id);
-        if (el && window.scrollY >= el.offsetTop - 150) {
-          setActiveLink(id);
+    const fn = () => {
+      for (const { href } of [...NAV_LINKS].reverse()) {
+        const el = document.querySelector(href);
+        if (el && window.scrollY >= el.offsetTop - 160) {
+          setActiveLink(href);
           break;
         }
       }
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
   }, []);
 
   return (
     <>
-      {/* Custom cursor */}
       <CustomCursor />
-
-      {/* Easter egg */}
       <EasterEgg />
 
-      {/* Loading screen */}
       <AnimatePresence>
-        {loading && (
-          <LoadingScreen onComplete={() => setLoading(false)} />
-        )}
+        {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
-      {/* Main content */}
       <AnimatePresence>
         {!loading && (
           <motion.div
             key="main"
-            variants={pageVariants}
-            initial="initial"
-            animate="enter"
-            exit="exit"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.5 } }}
+            exit={{ opacity: 0 }}
           >
             <Navbar active={activeLink} />
             <main>

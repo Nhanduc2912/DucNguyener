@@ -1,212 +1,134 @@
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useRef, useEffect } from "react";
 import { TIMELINE } from "../../data/portfolio";
 
-function TimelineCard({ item, index }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  const isLeft = index % 2 === 0;
-
-  return (
-    <div
-      ref={ref}
-      style={{
-        display: "flex",
-        justifyContent: isLeft ? "flex-start" : "flex-end",
-        paddingLeft: isLeft ? "0" : "50%",
-        paddingRight: isLeft ? "50%" : "0",
-        position: "relative",
-        marginBottom: "3rem",
-      }}
-      className="md:block hidden"
-    >
-      <motion.div
-        initial={{ opacity: 0, x: isLeft ? -60 : 60 }}
-        animate={inView ? { opacity: 1, x: 0 } : {}}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="glass-card"
-        style={{
-          maxWidth: "calc(50% - 3rem)",
-          padding: "1.75rem",
-          position: "relative",
-          width: "100%",
-          marginLeft: isLeft ? "0" : "auto",
-        }}
-      >
-        {/* Year badge */}
-        <div style={{
-          position: "absolute",
-          top: "1.25rem",
-          [isLeft ? "right" : "left"]: "-5.5rem",
-          background: "linear-gradient(135deg, #0ea5e9, #8b5cf6)",
-          color: "#fff",
-          fontWeight: 800,
-          fontFamily: "Outfit, sans-serif",
-          fontSize: "1rem",
-          padding: "6px 16px",
-          borderRadius: "9999px",
-          boxShadow: "0 4px 20px rgba(14,165,233,0.3)",
-          whiteSpace: "nowrap",
-        }}>
-          {item.year}
-        </div>
-
-        {/* Icon */}
-        <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>{item.icon}</div>
-
-        <h3 style={{
-          fontFamily: "Outfit, sans-serif",
-          fontWeight: 700,
-          fontSize: "1.1rem",
-          color: "#0f172a",
-          marginBottom: "0.5rem",
-        }}>
-          {item.title}
-        </h3>
-        <p style={{ color: "#64748b", lineHeight: 1.7, fontSize: "0.9rem", marginBottom: "1rem" }}>
-          {item.description}
-        </p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-          {item.tags.map((tag) => (
-            <span
-              key={tag}
-              className="tag"
-              style={{
-                background: "rgba(14,165,233,0.08)",
-                color: "#0ea5e9",
-                border: "1px solid rgba(14,165,233,0.2)",
-              }}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-// Mobile version - stacked
-function MobileCard({ item, index }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}
-    >
-      {/* Left connector */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-        <div style={{
-          width: 40, height: 40, borderRadius: "50%",
-          background: "linear-gradient(135deg, #0ea5e9, #8b5cf6)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "1.1rem", flexShrink: 0,
-          boxShadow: "0 4px 15px rgba(14,165,233,0.3)",
-        }}>
-          {item.icon}
-        </div>
-        {index < TIMELINE.length - 1 && (
-          <div style={{ width: 2, flex: 1, background: "linear-gradient(180deg, #0ea5e9, rgba(14,165,233,0.1))", marginTop: 8, minHeight: 40 }} />
-        )}
-      </div>
-
-      <div className="glass-card" style={{ flex: 1, padding: "1.25rem" }}>
-        <span style={{
-          display: "inline-block",
-          background: "linear-gradient(135deg, #0ea5e9, #8b5cf6)",
-          color: "#fff",
-          fontWeight: 700,
-          fontSize: "0.8rem",
-          padding: "2px 12px",
-          borderRadius: "9999px",
-          marginBottom: "0.5rem",
-          fontFamily: "Outfit, sans-serif",
-        }}>{item.year}</span>
-        <h3 style={{ fontFamily: "Outfit, sans-serif", fontWeight: 700, color: "#0f172a", marginBottom: "0.4rem", fontSize: "1rem" }}>
-          {item.title}
-        </h3>
-        <p style={{ color: "#64748b", fontSize: "0.85rem", lineHeight: 1.6, marginBottom: "0.75rem" }}>{item.description}</p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
-          {item.tags.slice(0, 4).map((tag) => (
-            <span key={tag} className="tag" style={{ background: "rgba(14,165,233,0.08)", color: "#0ea5e9", border: "1px solid rgba(14,165,233,0.2)", fontSize: "0.7rem" }}>
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".sr, .sr-left, .sr-right");
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
+      { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
 }
 
 export default function Timeline() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+  useScrollReveal();
 
   return (
-    <section id="timeline" className="section" style={{ background: "linear-gradient(160deg, #f8faff 0%, #f0f4ff 100%)" }}>
-      <div className="max-w-5xl mx-auto px-6">
+    <section id="timeline" className="section" style={{ background: "var(--bg-2)" }}>
+      <div className="container">
         {/* Header */}
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          style={{ textAlign: "center", marginBottom: "5rem" }}
-        >
-          <div className="section-tag">// hành trình học tập</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
-            Từ{" "}
-            <span style={{ background: "linear-gradient(135deg, #0ea5e9, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              Game đến Code
-            </span>
-          </h2>
-          <p style={{ color: "#64748b", marginTop: "1rem", maxWidth: 480, margin: "1rem auto 0" }}>
-            Hành trình từ một game thủ tò mò đến fullstack developer
+        <div className="sr" style={{ marginBottom: "4rem" }}>
+          <div className="label">Hành trình</div>
+          <h2 className="h-display h-xl">Từ game đến code</h2>
+          <p style={{ color: "var(--text-3)", marginTop: "0.75rem", maxWidth: 440, lineHeight: 1.7 }}>
+            Hành trình học tập và phát triển kỹ năng từ 2021 đến nay
           </p>
-        </motion.div>
-
-        {/* Desktop: Alternating timeline */}
-        <div style={{ position: "relative" }} className="hidden md:block">
-          {/* Center line */}
-          <div className="timeline-line" />
-          {/* Center dots */}
-          {TIMELINE.map((item, i) => (
-            <div key={item.year} style={{ position: "relative" }}>
-              {/* Center dot */}
-              <motion.div
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-                style={{
-                  position: "absolute",
-                  left: "50%",
-                  top: "1.75rem",
-                  transform: "translate(-50%, 0)",
-                  width: 18, height: 18,
-                  borderRadius: "50%",
-                  background: "linear-gradient(135deg, #0ea5e9, #8b5cf6)",
-                  boxShadow: "0 0 0 4px #f0f4ff, 0 0 0 6px rgba(14,165,233,0.3)",
-                  zIndex: 10,
-                }}
-              />
-              <TimelineCard item={item} index={i} />
-            </div>
-          ))}
         </div>
 
-        {/* Mobile: Stacked */}
-        <div className="md:hidden">
+        {/* Desktop — alternating */}
+        <div style={{ position: "relative" }} className="hidden md:block">
+          <div className="timeline-center-line" />
+          {TIMELINE.map((item, i) => {
+            const isLeft = i % 2 === 0;
+            return (
+              <div key={item.year} style={{ display: "grid", gridTemplateColumns: "1fr 80px 1fr", marginBottom: "3rem", alignItems: "center" }}>
+                {/* Left card */}
+                <div className={isLeft ? `sr-left sr-d${Math.min(i + 1, 5)}` : ""}>
+                  {isLeft && (
+                    <div
+                      style={{
+                        marginRight: "2rem",
+                        padding: "1.5rem",
+                        background: "var(--bg)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "var(--r-lg)",
+                        transition: "border-color 0.2s, box-shadow 0.2s",
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#0a0a0a"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.07)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
+                    >
+                      <TimelineContent item={item} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Center dot + year */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem", zIndex: 2 }}>
+                  <div style={{
+                    width: 14, height: 14, borderRadius: "50%",
+                    background: "#0a0a0a",
+                    boxShadow: "0 0 0 4px #fff, 0 0 0 6px rgba(0,0,0,0.12)",
+                  }} />
+                  <span style={{
+                    fontFamily: "var(--font-mono)", fontWeight: 700,
+                    fontSize: "0.75rem", color: "var(--text-3)",
+                    background: "var(--bg-2)", padding: "2px 8px",
+                    borderRadius: "var(--r-full)", border: "1px solid var(--border)",
+                  }}>
+                    {item.year}
+                  </span>
+                </div>
+
+                {/* Right card */}
+                <div className={!isLeft ? `sr-right sr-d${Math.min(i + 1, 5)}` : ""}>
+                  {!isLeft && (
+                    <div
+                      style={{
+                        marginLeft: "2rem",
+                        padding: "1.5rem",
+                        background: "var(--bg)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "var(--r-lg)",
+                        transition: "border-color 0.2s, box-shadow 0.2s",
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#0a0a0a"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.07)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
+                    >
+                      <TimelineContent item={item} />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Mobile — stacked */}
+        <div className="md:hidden" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {TIMELINE.map((item, i) => (
-            <MobileCard key={item.year} item={item} index={i} />
+            <div key={item.year} className={`sr sr-d${Math.min(i + 1, 5)}`}
+              style={{ display: "flex", gap: "1rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#0a0a0a", marginTop: 4, flexShrink: 0 }} />
+                {i < TIMELINE.length - 1 && <div style={{ width: 1, flex: 1, background: "var(--border)", marginTop: 6 }} />}
+              </div>
+              <div style={{ flex: 1, paddingBottom: "1rem" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--text-3)", display: "block", marginBottom: "0.4rem" }}>{item.year}</span>
+                <TimelineContent item={item} />
+              </div>
+            </div>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function TimelineContent({ item }) {
+  return (
+    <>
+      <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1rem", color: "var(--text-1)", marginBottom: "0.4rem" }}>
+        {item.title}
+      </h3>
+      <p style={{ color: "var(--text-3)", fontSize: "0.875rem", lineHeight: 1.7, marginBottom: "0.75rem" }}>
+        {item.description}
+      </p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
+        {item.tags.slice(0, 5).map((t) => <span key={t} className="tag">{t}</span>)}
+      </div>
+    </>
   );
 }

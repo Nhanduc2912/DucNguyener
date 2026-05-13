@@ -1,170 +1,147 @@
 import { useRef, useMemo, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
-import * as THREE from "three";
 import { Icon } from "@iconify/react";
 import { TECH_STACK } from "../../data/portfolio";
 
-function TechNode({ tech, position, onHover, onLeave, onClick }) {
-  const meshRef = useRef();
+// Always-visible node with icon
+function TechNode({ tech, position }) {
+  const groupRef = useRef();
   const [hovered, setHovered] = useState(false);
 
   useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.005;
+    if (groupRef.current) {
+      groupRef.current.rotation.y += 0.004;
     }
   });
 
-  const handleHover = () => {
-    setHovered(true);
-    onHover?.();
-  };
-  const handleLeave = () => {
-    setHovered(false);
-    onLeave?.();
-  };
-
   return (
-    <group position={position}>
+    <group ref={groupRef} position={position}>
       <mesh
-        ref={meshRef}
-        onPointerOver={handleHover}
-        onPointerOut={handleLeave}
-        onClick={() => onClick?.(tech.url)}
-        scale={hovered ? 1.25 : 1}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        onClick={() => window.open(tech.url, "_blank", "noreferrer")}
+        scale={hovered ? 1.3 : 1}
       >
-        <sphereGeometry args={[0.18, 12, 12]} />
+        <sphereGeometry args={[0.15, 12, 12]} />
         <meshStandardMaterial
-          color={hovered ? "#0ea5e9" : "#e2e8f0"}
-          emissive={hovered ? "#0ea5e9" : "#000000"}
-          emissiveIntensity={hovered ? 0.4 : 0}
-          roughness={0.3}
-          metalness={0.4}
+          color={hovered ? "#0a0a0a" : "#e8e8e8"}
+          roughness={0.4}
+          metalness={0.2}
           transparent
-          opacity={hovered ? 1 : 0.85}
+          opacity={0.9}
         />
       </mesh>
-      {hovered && (
-        <Html center style={{ pointerEvents: "none", userSelect: "none" }}>
+
+      {/* Always-visible icon label */}
+      <Html center style={{ pointerEvents: "none", userSelect: "none" }}>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+          transform: "translateY(-34px)",
+          opacity: hovered ? 0 : 1,
+          transition: "opacity 0.2s",
+        }}>
           <div style={{
-            background: "rgba(255,255,255,0.95)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid rgba(14,165,233,0.3)",
-            borderRadius: "10px",
-            padding: "6px 12px",
-            fontSize: "11px",
+            background: "rgba(255,255,255,0.92)",
+            border: "1px solid rgba(0,0,0,0.1)",
+            borderRadius: 8,
+            padding: "4px 6px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+            boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+            backdropFilter: "blur(8px)",
+          }}>
+            <Icon icon={tech.icon} width={16} height={16} />
+            <span style={{ fontSize: 9, fontWeight: 600, color: "#0a0a0a", fontFamily: "Space Grotesk, sans-serif", whiteSpace: "nowrap" }}>
+              {tech.name}
+            </span>
+          </div>
+        </div>
+
+        {/* Hovered tooltip */}
+        {hovered && (
+          <div style={{
+            transform: "translateY(-42px)",
+            background: "#0a0a0a",
+            color: "#fff",
+            borderRadius: 8,
+            padding: "5px 12px",
+            fontSize: 11,
             fontWeight: 600,
-            color: "#0f172a",
             whiteSpace: "nowrap",
-            boxShadow: "0 4px 20px rgba(14,165,233,0.2)",
             fontFamily: "Space Grotesk, sans-serif",
             display: "flex",
             alignItems: "center",
-            gap: "6px",
-            transform: "translateY(-30px)",
+            gap: 5,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
+            cursor: "pointer",
           }}>
-            <Icon icon={tech.icon} width={14} height={14} />
-            {tech.name}
+            <Icon icon={tech.icon} width={12} height={12} />
+            {tech.name} →
           </div>
-        </Html>
-      )}
+        )}
+      </Html>
     </group>
   );
 }
 
-function GlobeScene({ techs, onNodeClick }) {
+function GlobeScene({ techs }) {
   const groupRef = useRef();
   const isDragging = useRef(false);
   const lastMouse = useRef({ x: 0, y: 0 });
-  const velocity = useRef({ x: 0, y: 0 });
+  const velocity = useRef({ x: 0 });
 
-  // Fibonacci sphere distribution for even spread
   const positions = useMemo(() => {
-    const pts = [];
     const n = techs.length;
     const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-    for (let i = 0; i < n; i++) {
+    return Array.from({ length: n }, (_, i) => {
       const y = 1 - (i / (n - 1)) * 2;
-      const r = Math.sqrt(1 - y * y);
+      const r = Math.sqrt(Math.max(0, 1 - y * y));
       const theta = goldenAngle * i;
-      pts.push([r * Math.cos(theta) * 2.2, y * 2.2, r * Math.sin(theta) * 2.2]);
-    }
-    return pts;
+      return [r * Math.cos(theta) * 2.5, y * 2.5, r * Math.sin(theta) * 2.5];
+    });
   }, [techs]);
 
   useFrame(() => {
-    if (!groupRef.current) return;
-    if (!isDragging.current) {
-      velocity.current.x *= 0.95;
-      velocity.current.y *= 0.95;
-      groupRef.current.rotation.y += 0.004 + velocity.current.x * 0.01;
-      groupRef.current.rotation.x += velocity.current.y * 0.01;
-      // Clamp x rotation
-      groupRef.current.rotation.x = Math.max(-0.5, Math.min(0.5, groupRef.current.rotation.x));
-    }
+    if (!groupRef.current || isDragging.current) return;
+    velocity.current.x *= 0.96;
+    groupRef.current.rotation.y += 0.003 + velocity.current.x * 0.01;
   });
 
-  const handlePointerDown = (e) => {
-    isDragging.current = true;
-    lastMouse.current = { x: e.clientX, y: e.clientY };
-  };
-  const handlePointerMove = (e) => {
+  const onPointerDown = (e) => { isDragging.current = true; lastMouse.current = { x: e.clientX, y: e.clientY }; };
+  const onPointerMove = (e) => {
     if (!isDragging.current || !groupRef.current) return;
     const dx = e.clientX - lastMouse.current.x;
-    const dy = e.clientY - lastMouse.current.y;
-    velocity.current = { x: dx * 0.5, y: dy * 0.3 };
-    groupRef.current.rotation.y += dx * 0.008;
-    groupRef.current.rotation.x += dy * 0.005;
-    lastMouse.current = { x: e.clientX, y: e.clientY };
+    velocity.current.x = dx * 0.3;
+    groupRef.current.rotation.y += dx * 0.007;
+    lastMouse.current = { x: e.clientX };
   };
-  const handlePointerUp = () => { isDragging.current = false; };
+  const onPointerUp = () => { isDragging.current = false; };
 
   return (
-    <group
-      ref={groupRef}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerUp}
-    >
-      {/* Wireframe globe outline */}
+    <group ref={groupRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerLeave={onPointerUp}>
       <mesh>
-        <sphereGeometry args={[2.35, 24, 24]} />
-        <meshStandardMaterial
-          color="#0ea5e9"
-          wireframe
-          transparent
-          opacity={0.06}
-        />
+        <sphereGeometry args={[2.65, 28, 28]} />
+        <meshStandardMaterial color="#0a0a0a" wireframe transparent opacity={0.05} />
       </mesh>
-
       {techs.map((tech, i) => (
-        <TechNode
-          key={tech.name}
-          tech={tech}
-          position={positions[i]}
-          onClick={onNodeClick}
-        />
+        <TechNode key={tech.name} tech={tech} position={positions[i]} />
       ))}
     </group>
   );
 }
 
 export default function TechGlobe({ techs = TECH_STACK }) {
-  const handleNodeClick = (url) => {
-    if (url) window.open(url, "_blank", "noreferrer");
-  };
-
   return (
-    <Canvas
-      camera={{ position: [0, 0, 6], fov: 50 }}
-      style={{ background: "transparent", width: "100%", height: "100%", cursor: "grab" }}
-      gl={{ alpha: true, antialias: true }}
-    >
-      <ambientLight intensity={1.5} />
-      <directionalLight position={[5, 5, 5]} intensity={1.2} />
-      <pointLight position={[-5, -5, -5]} intensity={0.5} color="#8b5cf6" />
-      <GlobeScene techs={techs} onNodeClick={handleNodeClick} />
+    <Canvas camera={{ position: [0, 0, 7], fov: 50 }} style={{ background: "transparent", width: "100%", height: "100%" }} gl={{ alpha: true, antialias: true }}>
+      <ambientLight intensity={2} />
+      <directionalLight position={[5, 5, 5]} intensity={1.5} />
+      <GlobeScene techs={techs} />
     </Canvas>
   );
 }

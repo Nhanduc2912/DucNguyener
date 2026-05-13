@@ -1,18 +1,35 @@
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useEffect } from "react";
 import { PERSONAL } from "../../data/portfolio";
 import { useMagneticEffect } from "../../hooks/useMagneticEffect";
 
-function MagneticBtn({ href, children, primary, target }) {
-  const ref = useMagneticEffect(0.4);
+function MagBtn({ href, children, white, target }) {
+  const ref = useMagneticEffect(0.35);
   return (
     <div ref={ref} style={{ display: "inline-block" }}>
       <a
         href={href}
         target={target}
         rel={target ? "noreferrer" : undefined}
-        className={`magnetic-btn ${primary ? "magnetic-btn-primary" : "magnetic-btn-secondary"}`}
-        style={{ fontSize: "1rem", padding: "1rem 2.5rem" }}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: "0.5rem",
+          padding: "0.85rem 2rem", borderRadius: "var(--r-full)",
+          fontWeight: 600, fontSize: "0.9rem", fontFamily: "var(--font-main)",
+          cursor: "pointer", textDecoration: "none",
+          transition: "all 0.2s ease",
+          background: white ? "#fff" : "transparent",
+          color: white ? "#0a0a0a" : "rgba(255,255,255,0.7)",
+          border: white ? "none" : "1.5px solid rgba(255,255,255,0.2)",
+        }}
+        onMouseEnter={(e) => {
+          if (!white) { e.currentTarget.style.borderColor = "rgba(255,255,255,0.6)"; e.currentTarget.style.color = "#fff"; }
+          else { e.currentTarget.style.opacity = "0.9"; }
+          e.currentTarget.style.transform = "translateY(-2px)";
+        }}
+        onMouseLeave={(e) => {
+          if (!white) { e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }
+          else { e.currentTarget.style.opacity = "1"; }
+          e.currentTarget.style.transform = "translateY(0)";
+        }}
       >
         {children}
       </a>
@@ -21,131 +38,90 @@ function MagneticBtn({ href, children, primary, target }) {
 }
 
 export default function Contact() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll(".sr,.sr-left,.sr-right").forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
 
   return (
-    <section id="contact" className="section" style={{ background: "linear-gradient(160deg, #f0f7ff 0%, #f5f0ff 100%)" }}>
-      <div className="max-w-3xl mx-auto px-6 text-center">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 40 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-        >
-          {/* Decorative */}
-          <div style={{
-            width: 80, height: 80, borderRadius: "50%",
-            background: "linear-gradient(135deg, #0ea5e9, #8b5cf6)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            margin: "0 auto 2rem",
-            fontSize: "2rem",
-            boxShadow: "0 8px 40px rgba(14,165,233,0.3)",
-          }}>
-            ✉️
+    <section id="contact" className="contact-section" style={{ padding: "6rem 0 0" }}>
+      <div className="container">
+        {/* Main contact block */}
+        <div className="sr" style={{ textAlign: "center", paddingBottom: "5rem" }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: "1.25rem" }}>
+            Liên hệ
           </div>
-
-          <div className="section-tag">// liên hệ</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", marginBottom: "1.25rem" }}>
-            Hãy{" "}
-            <span style={{ background: "linear-gradient(135deg, #0ea5e9, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              kết nối
-            </span>{" "}
-            với tôi
+          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(2.5rem, 6vw, 4.5rem)", lineHeight: 1.05, color: "#fff", marginBottom: "1.25rem" }}>
+            Hãy kết nối
+            <br />
+            <span style={{ color: "rgba(255,255,255,0.35)" }}>với tôi</span>
           </h2>
-          <p style={{ color: "#64748b", fontSize: "1.05rem", lineHeight: 1.8, marginBottom: "2.5rem", maxWidth: 500, margin: "0 auto 2.5rem" }}>
-            Tôi luôn mở với các cơ hội thực tập, dự án nhóm, freelance hoặc đơn giản là một cuộc trò chuyện thú vị về công nghệ 😄
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "1rem", lineHeight: 1.8, maxWidth: 460, margin: "0 auto 2.5rem", letterSpacing: "0.01em" }}>
+            Tôi luôn mở với cơ hội thực tập, dự án nhóm, freelance hoặc một cuộc trò chuyện thú vị về công nghệ.
           </p>
 
-          {/* Contact buttons */}
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1rem", marginBottom: "3rem" }}>
-            <MagneticBtn
-              href={`mailto:${PERSONAL.email}`}
-              primary
-            >
-              Gửi Email 📧
-            </MagneticBtn>
-            <MagneticBtn href={PERSONAL.facebook} target="_blank">
+          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "0.75rem", marginBottom: "2.5rem" }}>
+            <MagBtn href={`mailto:${PERSONAL.email}`} white>
+              Gửi Email
+            </MagBtn>
+            <MagBtn href={PERSONAL.facebook} target="_blank">
               Facebook
-            </MagneticBtn>
-            <MagneticBtn href={PERSONAL.github} target="_blank">
+            </MagBtn>
+            <MagBtn href={PERSONAL.github} target="_blank">
               GitHub
-            </MagneticBtn>
+            </MagBtn>
           </div>
 
           {/* Email display */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.4 }}
+          <a href={`mailto:${PERSONAL.email}`}
             style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              padding: "0.75rem 1.5rem",
-              background: "rgba(255,255,255,0.7)",
-              backdropFilter: "blur(12px)",
-              border: "1px solid rgba(14,165,233,0.15)",
-              borderRadius: "9999px",
-              marginBottom: "4rem",
+              display: "inline-block",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.9rem",
+              color: "rgba(255,255,255,0.4)",
+              letterSpacing: "0.04em",
+              transition: "color 0.2s",
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.8)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}
           >
-            <span style={{ color: "#94a3b8", fontSize: "0.85rem" }}>📬</span>
-            <a
-              href={`mailto:${PERSONAL.email}`}
-              style={{
-                color: "#0ea5e9",
-                fontFamily: "JetBrains Mono, monospace",
-                fontSize: "0.9rem",
-                textDecoration: "none",
-                fontWeight: 500,
-              }}
-            >
-              {PERSONAL.email}
-            </a>
-          </motion.div>
-        </motion.div>
+            {PERSONAL.email}
+          </a>
+        </div>
 
-        {/* Footer */}
-        <div className="footer-divider" style={{ marginBottom: "2rem" }} />
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.5 }}
-        >
-          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "1.5rem", marginBottom: "1rem" }}>
-            {[
-              { label: "GitHub", href: PERSONAL.github },
-              { label: "Facebook", href: PERSONAL.facebook },
-              { label: "Email", href: `mailto:${PERSONAL.email}` },
-              { label: "CV", href: PERSONAL.cv },
-            ].map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                style={{
-                  color: "#94a3b8",
-                  textDecoration: "none",
-                  fontSize: "0.875rem",
-                  fontWeight: 500,
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#0ea5e9")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#94a3b8")}
-              >
-                {link.label}
-              </a>
-            ))}
+        {/* Footer bar */}
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", padding: "1.75rem 0" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "rgba(255,255,255,0.25)" }}>
+              © 2026 Ducnguyener — Nguyễn Trần Nhân Đức
+            </p>
+            <div style={{ display: "flex", gap: "1.5rem" }}>
+              {[
+                { label: "GitHub", href: PERSONAL.github },
+                { label: "Facebook", href: PERSONAL.facebook },
+                { label: "Email", href: `mailto:${PERSONAL.email}` },
+                { label: "CV", href: PERSONAL.cv },
+              ].map((l) => (
+                <a key={l.label} href={l.href}
+                  target={l.href.startsWith("http") ? "_blank" : undefined}
+                  rel={l.href.startsWith("http") ? "noreferrer" : undefined}
+                  style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.28)", transition: "color 0.2s", fontWeight: 500 }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.28)")}
+                >
+                  {l.label}
+                </a>
+              ))}
+            </div>
           </div>
-          <p style={{ color: "#cbd5e1", fontSize: "0.8rem", fontFamily: "JetBrains Mono, monospace" }}>
-            © 2026 Nguyễn Trần Nhân Đức · DucNguyener · Built with React + Three.js + ❤️
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "rgba(255,255,255,0.12)", marginTop: "0.75rem", textAlign: "center" }}>
+            Tip: Nhập ↑↑↓↓←→←→BA để khám phá Easter Egg ẩn
           </p>
-          <p style={{ color: "#e2e8f0", fontSize: "0.72rem", marginTop: "0.5rem", fontFamily: "JetBrains Mono, monospace" }}>
-            Tip: thử nhập ↑↑↓↓←→←→BA cho một bất ngờ nhỏ 🎮
-          </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

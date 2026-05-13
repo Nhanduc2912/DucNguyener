@@ -1,185 +1,134 @@
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
-import { Icon } from "@iconify/react";
+import { useEffect } from "react";
 import { CERTIFICATES } from "../../data/portfolio";
 
-function CertCard({ cert, index }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.15 }}
-      className="cert-flip-wrapper"
-    >
-      <div className="cert-flip-inner">
-        {/* Front */}
-        <div
-          className="cert-flip-front glass-card"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-            border: `1px solid ${cert.color}25`,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <div style={{
-              width: 52, height: 52,
-              borderRadius: 14,
-              background: `linear-gradient(135deg, ${cert.color}20, ${cert.color}08)`,
-              border: `1px solid ${cert.color}25`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "1.5rem",
-              flexShrink: 0,
-            }}>
-              {cert.issuer === "Google" ? "🎓" : cert.issuer === "FPT University" ? "🏆" : "💼"}
-            </div>
-            <div>
-              <h3 style={{
-                fontFamily: "Outfit, sans-serif",
-                fontWeight: 700,
-                fontSize: "1rem",
-                color: "#0f172a",
-                marginBottom: "0.2rem",
-              }}>
-                {cert.title}
-              </h3>
-              <p style={{ fontSize: "0.8rem", color: cert.color, fontWeight: 600 }}>
-                {cert.issuer}
-              </p>
-            </div>
-          </div>
-
-          <div style={{
-            padding: "6px 14px",
-            background: `${cert.color}10`,
-            border: `1px solid ${cert.color}20`,
-            borderRadius: "9999px",
-            display: "inline-flex",
-            alignItems: "center",
-            fontSize: "0.75rem",
-            fontWeight: 600,
-            color: cert.color,
-            alignSelf: "flex-start",
-          }}>
-            {cert.badge}
-          </div>
-
-          <p style={{ color: "#94a3b8", fontSize: "0.78rem", fontFamily: "JetBrains Mono, monospace" }}>
-            Hover để xem chi tiết →
-          </p>
-        </div>
-
-        {/* Back */}
-        <div
-          className="cert-flip-back"
-          style={{
-            background: `linear-gradient(135deg, ${cert.color}12, ${cert.color}06)`,
-            border: `1px solid ${cert.color}25`,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            gap: "0.75rem",
-          }}
-        >
-          <p style={{ fontWeight: 700, color: cert.color, fontSize: "0.85rem", fontFamily: "Outfit, sans-serif" }}>
-            {cert.issuer} · {cert.year}
-          </p>
-          <p style={{ color: "#475569", fontSize: "0.85rem", lineHeight: 1.7 }}>
-            {cert.description}
-          </p>
-        </div>
-      </div>
-    </motion.div>
-  );
+function useScrollReveal() {
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+    document.querySelectorAll(".sr,.sr-left,.sr-right").forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
 }
 
 export default function Certificates() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+  useScrollReveal();
 
   return (
-    <section id="certificates" className="section" style={{ background: "#fff" }}>
-      <div className="max-w-5xl mx-auto px-6">
+    <section id="certificates" className="section" style={{ background: "var(--bg)" }}>
+      <div className="container">
         {/* Header */}
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          style={{ textAlign: "center", marginBottom: "3.5rem" }}
-        >
-          <div className="section-tag">// chứng chỉ & kinh nghiệm</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
-            Thành tích{" "}
-            <span style={{ background: "linear-gradient(135deg, #f59e0b, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              nổi bật
-            </span>
-          </h2>
-          <p style={{ color: "#64748b", marginTop: "0.75rem" }}>
+        <div className="sr" style={{ marginBottom: "3.5rem" }}>
+          <div className="label">Thành tích</div>
+          <h2 className="h-display h-xl">Chứng chỉ & Kinh nghiệm</h2>
+          <p style={{ color: "var(--text-3)", marginTop: "0.75rem", lineHeight: 1.7 }}>
             Hover vào card để xem chi tiết
           </p>
-        </motion.div>
+        </div>
 
-        {/* Cert cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.5rem" }}>
+        {/* Cert flip cards — large, prominent */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.25rem", marginBottom: "2.5rem" }}>
           {CERTIFICATES.map((cert, i) => (
-            <CertCard key={cert.title} cert={cert} index={i} />
+            <div key={cert.title} className={`cert-flip sr sr-d${i + 1}`} style={{ height: 240 }}>
+              <div className="cert-flip-inner" style={{ height: "100%" }}>
+                {/* Front */}
+                <div className="cert-face" style={{
+                  background: i === 0 ? "#0a0a0a" : i === 1 ? "var(--bg-2)" : "var(--bg-2)",
+                  color: i === 0 ? "#fff" : "var(--text-1)",
+                  border: i === 0 ? "none" : "1px solid var(--border)",
+                  display: "flex", flexDirection: "column", justifyContent: "space-between",
+                }}>
+                  <div>
+                    <div style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.68rem",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: i === 0 ? "rgba(255,255,255,0.45)" : "var(--text-4)",
+                      marginBottom: "0.75rem",
+                    }}>
+                      {cert.issuer} · {cert.year}
+                    </div>
+                    <h3 style={{
+                      fontFamily: "var(--font-display)",
+                      fontWeight: 800,
+                      fontSize: "1.35rem",
+                      lineHeight: 1.2,
+                      color: i === 0 ? "#fff" : "var(--text-1)",
+                      marginBottom: "0.6rem",
+                    }}>
+                      {cert.title}
+                    </h3>
+                    <p style={{
+                      fontSize: "0.82rem",
+                      color: i === 0 ? "rgba(255,255,255,0.5)" : "var(--text-3)",
+                      lineHeight: 1.6,
+                    }}>
+                      {cert.badge}
+                    </p>
+                  </div>
+                  <p style={{
+                    fontSize: "0.7rem",
+                    fontFamily: "var(--font-mono)",
+                    color: i === 0 ? "rgba(255,255,255,0.3)" : "var(--text-4)",
+                  }}>
+                    Hover để xem chi tiết →
+                  </p>
+                </div>
+
+                {/* Back */}
+                <div className="cert-face cert-back" style={{
+                  background: i === 0 ? "#1a1a1a" : "#0a0a0a",
+                  color: "#fff",
+                  display: "flex", flexDirection: "column", justifyContent: "center",
+                }}>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "rgba(255,255,255,0.4)", marginBottom: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                    {cert.issuer} · {cert.year}
+                  </p>
+                  <h4 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1.1rem", color: "#fff", marginBottom: "0.75rem" }}>
+                    {cert.title}
+                  </h4>
+                  <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", lineHeight: 1.7 }}>
+                    {cert.description}
+                  </p>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* Internship highlight */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="glass-card"
-          style={{
-            marginTop: "2.5rem",
-            padding: "2rem",
-            background: "linear-gradient(135deg, rgba(16,185,129,0.06), rgba(14,165,233,0.06))",
-            border: "1px solid rgba(16,185,129,0.2)",
-            display: "flex",
-            alignItems: "center",
-            gap: "1.5rem",
-            flexWrap: "wrap",
-          }}
-        >
-          <div style={{
-            width: 64, height: 64, borderRadius: 18,
-            background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(14,165,233,0.1))",
-            border: "1px solid rgba(16,185,129,0.3)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "2rem", flexShrink: 0,
-          }}>
-            🏛️
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
-              <h3 style={{ fontFamily: "Outfit, sans-serif", fontWeight: 700, fontSize: "1.1rem", color: "#0f172a" }}>
-                Thực tập kỹ sư phần mềm
-              </h3>
-              <span style={{
-                padding: "3px 12px", borderRadius: "9999px",
-                background: "rgba(16,185,129,0.1)", color: "#10b981",
-                fontSize: "0.75rem", fontWeight: 600,
-                border: "1px solid rgba(16,185,129,0.25)",
-                display: "flex", alignItems: "center", gap: "4px",
-              }}>
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981", animation: "pulse 2s infinite" }} />
-                Đang diễn ra
-              </span>
+        {/* Internship — large highlight bar */}
+        <div className="sr sr-d4" style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "2rem",
+          padding: "2rem 2.5rem",
+          background: "var(--bg-2)",
+          border: "1px solid var(--border)",
+          borderLeft: "4px solid #0a0a0a",
+          borderRadius: "var(--r-lg)",
+          flexWrap: "wrap",
+        }}>
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--text-4)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+              Thực tập hiện tại
             </div>
-            <p style={{ color: "#10b981", fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.4rem" }}>
-              Bảo Tàng Đà Nẵng · 11/05/2026 – ~07/2026
-            </p>
-            <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: 1.7 }}>
-              Tham gia phát triển và duy trì hệ thống thông tin của bảo tàng. Áp dụng kiến thức fullstack vào môi trường thực tế chuyên nghiệp.
+            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.25rem", color: "var(--text-1)", marginBottom: "0.4rem" }}>
+              Kỹ sư phần mềm — Bảo Tàng Đà Nẵng
+            </h3>
+            <p style={{ color: "var(--text-3)", fontSize: "0.875rem", lineHeight: 1.7 }}>
+              Phát triển và duy trì hệ thống thông tin của bảo tàng. Áp dụng kiến thức fullstack vào môi trường thực tế chuyên nghiệp.
             </p>
           </div>
-        </motion.div>
+          <div style={{ textAlign: "right", flexShrink: 0 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 14px", background: "#0a0a0a", color: "#fff", borderRadius: "var(--r-full)", fontSize: "0.78rem", fontWeight: 600, marginBottom: "0.5rem" }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#4ade80", display: "inline-block" }} />
+              Đang diễn ra
+            </div>
+            <p style={{ color: "var(--text-4)", fontSize: "0.78rem", fontFamily: "var(--font-mono)" }}>11/05/2026 – 07/2026</p>
+          </div>
+        </div>
       </div>
     </section>
   );

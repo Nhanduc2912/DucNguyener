@@ -1,30 +1,18 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NAV_LINKS, PERSONAL } from "../data/portfolio";
-import { useMagneticEffect } from "../hooks/useMagneticEffect";
-
-function MagneticLink({ href, children, className, onClick }) {
-  const ref = useMagneticEffect(0.3);
-  return (
-    <div ref={ref} style={{ display: "inline-block" }}>
-      <a href={href} className={className} onClick={onClick}>
-        {children}
-      </a>
-    </div>
-  );
-}
 
 export default function Navbar({ active }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  const handleNav = (e, href) => {
+  const go = (e, href) => {
     e.preventDefault();
     setMobileOpen(false);
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
@@ -33,150 +21,81 @@ export default function Navbar({ active }) {
   return (
     <motion.nav
       className="navbar"
-      initial={{ opacity: 0, y: -30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
-      style={{ top: scrolled ? "0.75rem" : "1.25rem", transition: "top 0.4s ease" }}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: scrolled ? 0 : 0 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
     >
       <div className="navbar-inner">
         {/* Logo */}
-        <motion.a
-          href="#about"
-          onClick={(e) => handleNav(e, "#about")}
-          style={{
-            fontFamily: "JetBrains Mono, monospace",
-            fontWeight: 700,
-            fontSize: "1.05rem",
-            background: "linear-gradient(135deg, #0ea5e9, #8b5cf6)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-            textDecoration: "none",
-            letterSpacing: "0.05em",
-          }}
-          whileHover={{ scale: 1.05 }}
-        >
-          DucNguyener
-        </motion.a>
+        <a href="#about" onClick={(e) => go(e, "#about")}
+          style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "0.95rem", color: "var(--text-1)", letterSpacing: "0.06em" }}>
+          Ducnguyener
+        </a>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-2">
+        {/* Desktop links */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }} className="hidden md:flex">
           {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleNav(e, link.href)}
+            <a key={link.href} href={link.href} onClick={(e) => go(e, link.href)}
               style={{
-                padding: "0.4rem 0.9rem",
-                borderRadius: "9999px",
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                textDecoration: "none",
-                transition: "all 0.2s ease",
-                color: active === link.href ? "#0ea5e9" : "#475569",
-                background: active === link.href ? "rgba(14,165,233,0.08)" : "transparent",
+                padding: "0.4rem 0.85rem", borderRadius: "var(--r-full)",
+                fontSize: "0.85rem", fontWeight: 500, transition: "all 0.2s",
+                color: active === link.href ? "var(--text-1)" : "var(--text-3)",
+                background: active === link.href ? "rgba(0,0,0,0.06)" : "transparent",
               }}
             >
               {link.label}
             </a>
           ))}
-
-          {/* CV Button */}
-          <div style={{ marginLeft: "0.5rem" }}>
-            <a
-              href={PERSONAL.cv}
-              target="_blank"
-              rel="noreferrer"
-              className="magnetic-btn magnetic-btn-primary"
-              style={{ padding: "0.5rem 1.25rem", fontSize: "0.85rem", borderRadius: "9999px" }}
-            >
-              Tải CV
-            </a>
-          </div>
+          <a href={PERSONAL.cv} target="_blank" rel="noreferrer"
+            className="btn btn-dark"
+            style={{ padding: "0.45rem 1.1rem", fontSize: "0.82rem", marginLeft: "0.5rem" }}>
+            Tải CV
+          </a>
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "0.5rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "5px",
-          }}
-          aria-label="Toggle menu"
-        >
+        {/* Mobile toggle */}
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden"
+          style={{ background: "none", border: "none", cursor: "pointer", padding: "0.4rem", display: "flex", flexDirection: "column", gap: "4px" }}>
           {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              style={{
-                display: "block",
-                width: "22px",
-                height: "2px",
-                background: "#0ea5e9",
-                borderRadius: "2px",
-                transform: mobileOpen
-                  ? i === 0 ? "rotate(45deg) translate(5px,5px)"
-                  : i === 1 ? "scaleX(0)"
-                  : "rotate(-45deg) translate(5px,-5px)"
-                  : "none",
-                transition: "transform 0.3s ease, opacity 0.3s ease",
-                opacity: mobileOpen && i === 1 ? 0 : 1,
-              }}
-            />
+            <span key={i} style={{
+              display: "block", width: "20px", height: "1.5px", background: "var(--text-1)", borderRadius: "2px",
+              transform: mobileOpen ? (i === 0 ? "rotate(45deg) translate(4px,4px)" : i === 1 ? "scaleX(0)" : "rotate(-45deg) translate(4px,-4px)") : "none",
+              opacity: mobileOpen && i === 1 ? 0 : 1,
+              transition: "transform 0.3s, opacity 0.3s",
+            }} />
           ))}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.97 }}
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.97 }}
-            transition={{ duration: 0.25 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.22 }}
             style={{
-              marginTop: "0.75rem",
-              background: "rgba(255,255,255,0.9)",
-              backdropFilter: "blur(20px)",
-              borderRadius: "20px",
-              border: "1px solid rgba(255,255,255,0.9)",
-              padding: "1.25rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.25rem",
+              marginTop: "0.6rem", background: "rgba(255,255,255,0.95)",
+              backdropFilter: "blur(20px)", borderRadius: "var(--r-lg)",
+              border: "1px solid rgba(0,0,0,0.07)", padding: "1rem",
+              display: "flex", flexDirection: "column", gap: "0.2rem",
             }}
           >
             {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => handleNav(e, link.href)}
+              <a key={link.href} href={link.href} onClick={(e) => go(e, link.href)}
                 style={{
-                  padding: "0.75rem 1rem",
-                  borderRadius: "12px",
-                  fontSize: "0.9rem",
-                  fontWeight: 500,
-                  textDecoration: "none",
-                  color: active === link.href ? "#0ea5e9" : "#475569",
-                  background: active === link.href ? "rgba(14,165,233,0.08)" : "transparent",
+                  padding: "0.65rem 1rem", borderRadius: "var(--r-md)",
+                  fontSize: "0.9rem", fontWeight: 500,
+                  color: active === link.href ? "var(--text-1)" : "var(--text-3)",
+                  background: active === link.href ? "rgba(0,0,0,0.05)" : "transparent",
                 }}
               >
                 {link.label}
               </a>
             ))}
-            <a
-              href={PERSONAL.cv}
-              target="_blank"
-              rel="noreferrer"
-              className="magnetic-btn magnetic-btn-primary"
-              style={{ marginTop: "0.5rem", justifyContent: "center" }}
-            >
+            <a href={PERSONAL.cv} target="_blank" rel="noreferrer"
+              className="btn btn-dark" style={{ justifyContent: "center", marginTop: "0.4rem" }}>
               Tải CV
             </a>
           </motion.div>
