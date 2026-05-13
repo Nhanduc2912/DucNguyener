@@ -1,169 +1,172 @@
 import { useRef } from "react";
 import { useFrame, Canvas } from "@react-three/fiber";
-import * as THREE from "three";
 
-// The 3D anime-ish head mesh
 function AnimeHead({ mousePos }) {
   const groupRef = useRef();
   const eyeLRef = useRef();
   const eyeRRef = useRef();
-  const pupilLRef = useRef();
-  const pupilRRef = useRef();
 
-  // Idle floating
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
-    if (groupRef.current) {
-      groupRef.current.position.y = Math.sin(t * 0.8) * 0.08;
-      groupRef.current.rotation.z = Math.sin(t * 0.5) * 0.02;
-    }
+    if (!groupRef.current) return;
 
-    // Eye/head tracking toward mouse
-    const targetRotX = -mousePos.current.y * 0.25;
-    const targetRotY = mousePos.current.x * 0.35;
-    if (groupRef.current) {
-      groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.06;
-      groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.06;
-    }
+    // Gentle idle float
+    groupRef.current.position.y = Math.sin(t * 0.7) * 0.06;
 
-    // Pupils follow mouse more
-    const pupilX = mousePos.current.x * 0.06;
-    const pupilY = -mousePos.current.y * 0.06;
-    if (pupilLRef.current) {
-      pupilLRef.current.position.x = -0.19 + pupilX;
-      pupilLRef.current.position.y = 0.08 + pupilY;
-    }
-    if (pupilRRef.current) {
-      pupilRRef.current.position.x = 0.19 + pupilX;
-      pupilRRef.current.position.y = 0.08 + pupilY;
-    }
+    // Mouse tracking
+    const tx = mousePos.current.x * 0.3;
+    const ty = -mousePos.current.y * 0.2;
+    groupRef.current.rotation.y += (tx - groupRef.current.rotation.y) * 0.05;
+    groupRef.current.rotation.x += (ty - groupRef.current.rotation.x) * 0.05;
 
-    // Blink occasionally
-    const blink = Math.sin(t * 3) > 0.97;
+    // Blink
+    const blink = Math.sin(t * 2.5) > 0.96;
     if (eyeLRef.current) eyeLRef.current.scale.y = blink ? 0.1 : 1;
     if (eyeRRef.current) eyeRRef.current.scale.y = blink ? 0.1 : 1;
   });
 
   return (
-    <group ref={groupRef}>
-      {/* Head — slightly angular for anime feel */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.6, 32, 32]} />
-        <meshStandardMaterial color="#fde8d0" roughness={0.7} metalness={0.0} />
+    <group ref={groupRef} position={[0, -0.05, 0]}>
+      {/* ── FACE ── */}
+      <mesh>
+        <sphereGeometry args={[0.58, 32, 32]} />
+        <meshStandardMaterial color="#fddcb5" roughness={0.8} />
       </mesh>
 
-      {/* Jaw/chin flatten */}
-      <mesh position={[0, -0.4, 0.1]} scale={[0.55, 0.28, 0.5]}>
+      {/* ── HAIR TOP ── */}
+      <mesh position={[0, 0.42, -0.04]} scale={[0.75, 0.45, 0.72]}>
         <sphereGeometry args={[0.6, 24, 24]} />
-        <meshStandardMaterial color="#fde8d0" roughness={0.7} />
+        <meshStandardMaterial color="#0a0a0a" roughness={0.9} />
+      </mesh>
+      {/* Hair left */}
+      <mesh position={[-0.48, 0.1, 0]} scale={[0.22, 0.55, 0.26]}>
+        <sphereGeometry args={[0.6, 16, 16]} />
+        <meshStandardMaterial color="#0a0a0a" roughness={0.9} />
+      </mesh>
+      {/* Hair right */}
+      <mesh position={[0.48, 0.1, 0]} scale={[0.22, 0.55, 0.26]}>
+        <sphereGeometry args={[0.6, 16, 16]} />
+        <meshStandardMaterial color="#0a0a0a" roughness={0.9} />
+      </mesh>
+      {/* Hair front bang */}
+      <mesh position={[0, 0.5, 0.28]} scale={[0.5, 0.22, 0.35]}>
+        <sphereGeometry args={[0.6, 16, 16]} />
+        <meshStandardMaterial color="#0a0a0a" roughness={0.9} />
       </mesh>
 
-      {/* Hair top */}
-      <mesh position={[0, 0.46, -0.05]} scale={[0.72, 0.42, 0.7]}>
-        <sphereGeometry args={[0.7, 24, 24]} />
-        <meshStandardMaterial color="#1a0a00" roughness={0.8} />
-      </mesh>
-      {/* Hair side left */}
-      <mesh position={[-0.45, 0.2, 0]} scale={[0.25, 0.5, 0.28]}>
-        <sphereGeometry args={[0.7, 16, 16]} />
-        <meshStandardMaterial color="#1a0a00" roughness={0.8} />
-      </mesh>
-      {/* Hair side right */}
-      <mesh position={[0.45, 0.2, 0]} scale={[0.25, 0.5, 0.28]}>
-        <sphereGeometry args={[0.7, 16, 16]} />
-        <meshStandardMaterial color="#1a0a00" roughness={0.8} />
-      </mesh>
-      {/* Hair bang middle */}
-      <mesh position={[0, 0.55, 0.35]} scale={[0.3, 0.2, 0.3]}>
-        <sphereGeometry args={[0.7, 16, 16]} />
-        <meshStandardMaterial color="#1a0a00" roughness={0.8} />
-      </mesh>
-      <mesh position={[-0.22, 0.52, 0.35]} scale={[0.28, 0.18, 0.28]}>
-        <sphereGeometry args={[0.7, 16, 16]} />
-        <meshStandardMaterial color="#1a0a00" roughness={0.8} />
-      </mesh>
-      <mesh position={[0.22, 0.52, 0.35]} scale={[0.28, 0.18, 0.28]}>
-        <sphereGeometry args={[0.7, 16, 16]} />
-        <meshStandardMaterial color="#1a0a00" roughness={0.8} />
-      </mesh>
-
-      {/* Eyes white — anime style (large) */}
-      <mesh ref={eyeLRef} position={[-0.19, 0.08, 0.52]} scale={[0.14, 0.17, 0.05]}>
+      {/* ── EYES (white sclera) ── */}
+      <mesh ref={eyeLRef} position={[-0.185, 0.08, 0.5]} scale={[0.135, 0.16, 0.04]}>
         <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.1} />
+        <meshStandardMaterial color="#ffffff" roughness={0.05} />
       </mesh>
-      <mesh ref={eyeRRef} position={[0.19, 0.08, 0.52]} scale={[0.14, 0.17, 0.05]}>
+      <mesh ref={eyeRRef} position={[0.185, 0.08, 0.5]} scale={[0.135, 0.16, 0.04]}>
         <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.1} />
+        <meshStandardMaterial color="#ffffff" roughness={0.05} />
       </mesh>
 
-      {/* Pupils */}
-      <mesh ref={pupilLRef} position={[-0.19, 0.08, 0.56]} scale={[0.065, 0.085, 0.04]}>
+      {/* ── PUPILS ── */}
+      <mesh position={[-0.185, 0.08, 0.54]} scale={[0.06, 0.08, 0.03]}>
         <sphereGeometry args={[1, 12, 12]} />
-        <meshStandardMaterial color="#1a2a6c" roughness={0.2} />
+        <meshStandardMaterial color="#111827" roughness={0.1} />
       </mesh>
-      <mesh ref={pupilRRef} position={[0.19, 0.08, 0.56]} scale={[0.065, 0.085, 0.04]}>
+      <mesh position={[0.185, 0.08, 0.54]} scale={[0.06, 0.08, 0.03]}>
         <sphereGeometry args={[1, 12, 12]} />
-        <meshStandardMaterial color="#1a2a6c" roughness={0.2} />
+        <meshStandardMaterial color="#111827" roughness={0.1} />
       </mesh>
 
       {/* Eye shine */}
-      <mesh position={[-0.175, 0.115, 0.585]} scale={[0.025, 0.025, 0.02]}>
+      <mesh position={[-0.17, 0.11, 0.56]} scale={[0.022, 0.022, 0.01]}>
         <sphereGeometry args={[1, 8, 8]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={2} />
+        <meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={3} />
       </mesh>
-      <mesh position={[0.205, 0.115, 0.585]} scale={[0.025, 0.025, 0.02]}>
+      <mesh position={[0.2, 0.11, 0.56]} scale={[0.022, 0.022, 0.01]}>
         <sphereGeometry args={[1, 8, 8]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={2} />
+        <meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={3} />
       </mesh>
 
-      {/* Glasses frame */}
-      <mesh position={[-0.19, 0.08, 0.57]} rotation={[0, 0, 0]}>
-        <torusGeometry args={[0.155, 0.018, 8, 32]} />
-        <meshStandardMaterial color="#2d3748" metalness={0.8} roughness={0.2} />
+      {/* ── GLASSES — use boxes, not torus ── */}
+      {/* Left lens frame (4 thin boxes forming a rectangle) */}
+      <mesh position={[-0.185, 0.08, 0.56]} scale={[0.32, 0.36, 0.01]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#0a0a0a" transparent opacity={0.0} />
       </mesh>
-      <mesh position={[0.19, 0.08, 0.57]}>
-        <torusGeometry args={[0.155, 0.018, 8, 32]} />
-        <meshStandardMaterial color="#2d3748" metalness={0.8} roughness={0.2} />
+      {/* Left frame outline - top */}
+      <mesh position={[-0.185, 0.175, 0.56]} scale={[0.31, 0.022, 0.01]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2d2d2d" metalness={0.5} roughness={0.3} />
       </mesh>
-      {/* Glasses bridge */}
-      <mesh position={[0, 0.09, 0.575]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.012, 0.012, 0.2, 8]} />
-        <meshStandardMaterial color="#2d3748" metalness={0.8} roughness={0.2} />
+      {/* Left frame - bottom */}
+      <mesh position={[-0.185, -0.015, 0.56]} scale={[0.31, 0.022, 0.01]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2d2d2d" metalness={0.5} roughness={0.3} />
+      </mesh>
+      {/* Left frame - left side */}
+      <mesh position={[-0.34, 0.08, 0.56]} scale={[0.022, 0.2, 0.01]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2d2d2d" metalness={0.5} roughness={0.3} />
+      </mesh>
+      {/* Left frame - right side */}
+      <mesh position={[-0.03, 0.08, 0.56]} scale={[0.022, 0.2, 0.01]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2d2d2d" metalness={0.5} roughness={0.3} />
       </mesh>
 
-      {/* Nose */}
-      <mesh position={[0, -0.06, 0.58]} scale={[0.04, 0.03, 0.03]}>
+      {/* Right lens frame */}
+      <mesh position={[0.185, 0.175, 0.56]} scale={[0.31, 0.022, 0.01]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2d2d2d" metalness={0.5} roughness={0.3} />
+      </mesh>
+      <mesh position={[0.185, -0.015, 0.56]} scale={[0.31, 0.022, 0.01]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2d2d2d" metalness={0.5} roughness={0.3} />
+      </mesh>
+      <mesh position={[0.03, 0.08, 0.56]} scale={[0.022, 0.2, 0.01]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2d2d2d" metalness={0.5} roughness={0.3} />
+      </mesh>
+      <mesh position={[0.34, 0.08, 0.56]} scale={[0.022, 0.2, 0.01]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2d2d2d" metalness={0.5} roughness={0.3} />
+      </mesh>
+
+      {/* Bridge */}
+      <mesh position={[0, 0.09, 0.56]} scale={[0.08, 0.018, 0.008]}>
+        <boxGeometry />
+        <meshStandardMaterial color="#2d2d2d" metalness={0.5} roughness={0.3} />
+      </mesh>
+
+      {/* ── NOSE ── */}
+      <mesh position={[0, -0.07, 0.56]} scale={[0.04, 0.03, 0.025]}>
         <sphereGeometry args={[1, 8, 8]} />
-        <meshStandardMaterial color="#f5c5a0" roughness={0.8} />
+        <meshStandardMaterial color="#e8a87c" roughness={0.8} />
       </mesh>
 
-      {/* Mouth — slight smile */}
-      <mesh position={[0, -0.2, 0.56]} rotation={[0, 0, 0]}>
-        <torusGeometry args={[0.09, 0.015, 6, 20, Math.PI * 0.7]} />
-        <meshStandardMaterial color="#e07070" roughness={0.6} />
+      {/* ── MOUTH ── */}
+      <mesh position={[0, -0.2, 0.54]} rotation={[0, 0, 0]}>
+        <torusGeometry args={[0.085, 0.013, 6, 16, Math.PI * 0.65]} />
+        <meshStandardMaterial color="#d9686b" roughness={0.6} />
       </mesh>
 
-      {/* Ears */}
-      <mesh position={[-0.58, 0.02, 0.0]} scale={[0.1, 0.14, 0.1]}>
+      {/* ── EARS ── */}
+      <mesh position={[-0.56, 0.02, 0]} scale={[0.09, 0.13, 0.09]}>
         <sphereGeometry args={[1, 12, 12]} />
-        <meshStandardMaterial color="#fde8d0" roughness={0.7} />
+        <meshStandardMaterial color="#fddcb5" roughness={0.8} />
       </mesh>
-      <mesh position={[0.58, 0.02, 0.0]} scale={[0.1, 0.14, 0.1]}>
+      <mesh position={[0.56, 0.02, 0]} scale={[0.09, 0.13, 0.09]}>
         <sphereGeometry args={[1, 12, 12]} />
-        <meshStandardMaterial color="#fde8d0" roughness={0.7} />
+        <meshStandardMaterial color="#fddcb5" roughness={0.8} />
       </mesh>
 
-      {/* Neck */}
-      <mesh position={[0, -0.65, 0]} scale={[0.25, 0.22, 0.25]}>
+      {/* ── NECK ── */}
+      <mesh position={[0, -0.66, 0]} scale={[0.22, 0.2, 0.22]}>
         <cylinderGeometry args={[1, 1, 1, 16]} />
-        <meshStandardMaterial color="#fde8d0" roughness={0.7} />
+        <meshStandardMaterial color="#fddcb5" roughness={0.8} />
       </mesh>
 
-      {/* Collar / shirt */}
-      <mesh position={[0, -0.88, -0.05]} scale={[0.7, 0.28, 0.55]}>
-        <sphereGeometry args={[0.7, 16, 16]} />
-        <meshStandardMaterial color="#1a202c" roughness={0.9} />
+      {/* ── SHIRT ── */}
+      <mesh position={[0, -0.86, -0.06]} scale={[0.68, 0.3, 0.52]}>
+        <sphereGeometry args={[0.7, 20, 20]} />
+        <meshStandardMaterial color="#1a1a1a" roughness={0.9} />
       </mesh>
     </group>
   );
@@ -172,16 +175,14 @@ function AnimeHead({ mousePos }) {
 export default function AnimeAvatar({ mousePos }) {
   return (
     <Canvas
-      camera={{ position: [0, 0.05, 3.1], fov: 42 }}
+      camera={{ position: [0, 0.1, 2.8], fov: 44 }}
       style={{ background: "transparent", width: "100%", height: "100%" }}
-      gl={{ alpha: true, antialias: true }}
+      gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+      dpr={[1, 1.5]}
     >
-      {/* Neutral white lighting — no colored tint */}
-      <ambientLight intensity={1.8} />
-      <directionalLight position={[3, 4, 5]} intensity={1.6} color="#ffffff" />
-      <directionalLight position={[-3, 2, 2]} intensity={0.8} color="#ffffff" />
-      <pointLight position={[0, 2, 3]} intensity={0.5} color="#ffffff" />
-
+      <ambientLight intensity={1.4} />
+      <directionalLight position={[2, 3, 4]} intensity={1.4} color="#ffffff" />
+      <directionalLight position={[-2, 1, 2]} intensity={0.6} color="#f0f0f0" />
       <AnimeHead mousePos={mousePos} />
     </Canvas>
   );

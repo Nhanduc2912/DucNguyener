@@ -99,12 +99,12 @@ export default function Hero() {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.25, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              style={{ flexShrink: 0, position: "relative" }}
+              style={{ flexShrink: 0, position: "relative", isolation: "isolate" }}
             >
-              <div className="avatar-wrapper">
+              <div className="avatar-wrapper" style={{ isolation: "isolate" }}>
                 <div className="avatar-ring" />
                 <div className="avatar-bg" />
-                <div className="avatar-canvas">
+                <div className="avatar-canvas" style={{ position: "relative", zIndex: 2, overflow: "hidden", borderRadius: "50%" }}>
                   <Suspense fallback={<div style={{ width: "100%", height: "100%", background: "var(--bg-2)" }} />}>
                     <AnimeAvatar mousePos={mousePos} />
                   </Suspense>
