@@ -4,42 +4,51 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ["Space Grotesk", "sans-serif"],
+        display: ["Outfit", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       colors: {
-        brand: {
-          cyan: "#22d3ee",
-          blue: "#3b82f6",
+        sky: {
+          400: "#38bdf8",
+          500: "#0ea5e9",
+          600: "#0284c7",
+        },
+        accent: {
+          sky: "#0ea5e9",
+          violet: "#8b5cf6",
           emerald: "#10b981",
           amber: "#f59e0b",
-          purple: "#a855f7",
           pink: "#ec4899",
         },
       },
+      animation: {
+        float: "float 4s ease-in-out infinite",
+        "spin-slow": "spin 8s linear infinite",
+        "blob-float": "blob-float 8s ease-in-out infinite",
+        shimmer: "shimmer 2s linear infinite",
+      },
       keyframes: {
         float: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-12px)" },
+          "0%,100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-14px)" },
         },
-        "glow-pulse": {
-          "0%, 100%": { opacity: "0.4", filter: "blur(60px)" },
-          "50%": { opacity: "0.7", filter: "blur(80px)" },
+        "blob-float": {
+          "0%,100%": { transform: "translate(0,0) scale(1)" },
+          "33%": { transform: "translate(20px,-30px) scale(1.05)" },
+          "66%": { transform: "translate(-15px,20px) scale(0.95)" },
         },
         shimmer: {
           "0%": { backgroundPosition: "-200% center" },
           "100%": { backgroundPosition: "200% center" },
         },
-        "border-spin": {
-          "0%": { transform: "rotate(0deg)" },
-          "100%": { transform: "rotate(360deg)" },
-        },
       },
-      animation: {
-        float: "float 4s ease-in-out infinite",
-        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
-        shimmer: "shimmer 3s linear infinite",
-        "border-spin": "border-spin 4s linear infinite",
+      backgroundImage: {
+        "gradient-hero": "linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)",
+        "gradient-soft": "linear-gradient(135deg, #e0f2fe 0%, #ede9fe 100%)",
+      },
+      backdropBlur: {
+        xs: "2px",
       },
     },
   },
