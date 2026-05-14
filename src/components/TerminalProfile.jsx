@@ -5,6 +5,8 @@ import { PERSONAL } from "../data/portfolio";
 export default function TerminalProfile() {
   const [text, setText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
+  const [isTypingDone, setIsTypingDone] = useState(false);
+  const [showExecution, setShowExecution] = useState(false);
 
   const codeString = `const developer = {
   name: "${PERSONAL.name}",
@@ -29,11 +31,22 @@ console.log(developer.greet());`;
       i++;
       if (i > codeString.length) {
         clearInterval(typingInterval);
+        setIsTypingDone(true);
       }
     }, 25); // Speed of typing
 
     return () => clearInterval(typingInterval);
   }, [codeString]);
+
+  // Show execution output after a short delay
+  useEffect(() => {
+    if (isTypingDone) {
+      const execTimer = setTimeout(() => {
+        setShowExecution(true);
+      }, 600);
+      return () => clearTimeout(execTimer);
+    }
+  }, [isTypingDone]);
 
   // Blinking cursor effect
   useEffect(() => {
@@ -86,9 +99,35 @@ console.log(developer.greet());`;
         <pre style={{ margin: 0, whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
           <code style={{ color: "#c9d1d9" }}>
             {text}
-            <span style={{ opacity: showCursor ? 1 : 0, color: "#7ee787" }}>_</span>
+            {!isTypingDone && <span style={{ opacity: showCursor ? 1 : 0, color: "#7ee787" }}>_</span>}
           </code>
         </pre>
+        
+        {isTypingDone && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }}
+            style={{ marginTop: "16px" }}
+          >
+            <div style={{ color: "#7ee787", marginBottom: "8px" }}>$ node about.js</div>
+            {showExecution && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div style={{ color: "#ff7b72" }}>Hello World!</div>
+                <div style={{ color: "#7ee787", marginTop: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ fontSize: "1.2rem" }}>🚀</span> 
+                  <span style={{ color: "#a5d6ff" }}>Ready to build amazing things...</span>
+                </div>
+                <div style={{ color: "#7ee787", marginTop: "12px" }}>
+                  $ <span style={{ opacity: showCursor ? 1 : 0 }}>_</span>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
