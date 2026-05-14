@@ -34,9 +34,9 @@ export default function Certificates() {
               <div className="cert-flip-inner" style={{ height: "100%" }}>
                 {/* Front */}
                 <div className="cert-face" style={{
-                  background: i === 0 ? "#0a0a0a" : i === 1 ? "var(--bg-2)" : "var(--bg-2)",
-                  color: i === 0 ? "#fff" : "var(--text-1)",
-                  border: i === 0 ? "none" : "1px solid var(--border)",
+                  background: "var(--bg-2)",
+                  color: "var(--text-1)",
+                  border: "1px solid var(--border)",
                   display: "flex", flexDirection: "column", justifyContent: "space-between",
                 }}>
                   <div>
@@ -45,7 +45,7 @@ export default function Certificates() {
                       fontSize: "0.68rem",
                       letterSpacing: "0.14em",
                       textTransform: "uppercase",
-                      color: i === 0 ? "rgba(255,255,255,0.45)" : "var(--text-4)",
+                      color: "var(--text-4)",
                       marginBottom: "0.75rem",
                     }}>
                       {cert.issuer} · {cert.year}
@@ -55,14 +55,14 @@ export default function Certificates() {
                       fontWeight: 800,
                       fontSize: "1.35rem",
                       lineHeight: 1.2,
-                      color: i === 0 ? "#fff" : "var(--text-1)",
+                      color: "var(--text-1)",
                       marginBottom: "0.6rem",
                     }}>
                       {cert.title}
                     </h3>
                     <p style={{
                       fontSize: "0.82rem",
-                      color: i === 0 ? "rgba(255,255,255,0.5)" : "var(--text-3)",
+                      color: "var(--text-3)",
                       lineHeight: 1.6,
                     }}>
                       {cert.badge}
@@ -71,7 +71,7 @@ export default function Certificates() {
                   <p style={{
                     fontSize: "0.7rem",
                     fontFamily: "var(--font-mono)",
-                    color: i === 0 ? "rgba(255,255,255,0.3)" : "var(--text-4)",
+                    color: "var(--text-4)",
                   }}>
                     Hover để xem chi tiết →
                   </p>
