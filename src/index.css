@@ -227,7 +227,7 @@ a { text-decoration: none; color: inherit; }
 /* RESPONSIVE */
 @media (max-width: 768px) {
   :root { --section-py: 3.5rem; }
-  .navbar { width: calc(100% - 2rem); }
+  .navbar { display: none !important; }
   .avatar-wrapper { width: 240px; height: 240px; }
   .tech-globe-container { height: 360px; }
 }
