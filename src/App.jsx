@@ -42,7 +42,7 @@ function useScrollReveal() {
     let obs = revealEls();
 
     // Re-observe after lazy-loaded components mount
-    const mutObs = new MbạnutationObserver(() => {
+    const mutObs = new MutationObserver(() => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         obs.disconnect();
