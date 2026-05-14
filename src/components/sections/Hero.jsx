@@ -4,7 +4,7 @@ import { PERSONAL, ROLES } from "../../data/portfolio";
 import { useTypingEffect } from "../../hooks/useTextEffects";
 import { useMagneticEffect } from "../../hooks/useMagneticEffect";
 
-const AnimeAvatar = lazy(() => import("../3d/AnimeAvatar"));
+import TerminalProfile from "../TerminalProfile";
 
 function MagBtn({ href, children, dark, target, onClick }) {
   const ref = useMagneticEffect(0.3);
@@ -99,18 +99,10 @@ export default function Hero() {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.25, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              style={{ flexShrink: 0, position: "relative", isolation: "isolate" }}
+              style={{ flexShrink: 0, position: "relative", isolation: "isolate", width: "100%", maxWidth: "480px" }}
             >
-              <div className="avatar-wrapper" style={{ isolation: "isolate" }}>
-                <div className="avatar-ring" />
-                <div className="avatar-bg" />
-                <div className="avatar-canvas" style={{ position: "relative", zIndex: 2, overflow: "hidden", borderRadius: "50%" }}>
-                  <Suspense fallback={<div style={{ width: "100%", height: "100%", background: "var(--bg-2)" }} />}>
-                    <AnimeAvatar mousePos={mousePos} />
-                  </Suspense>
-                </div>
-              </div>
-
+              <TerminalProfile />
+              
               {/* Floating code badge */}
               <motion.div
                 animate={{ y: [0, -8, 0] }}
@@ -120,6 +112,7 @@ export default function Hero() {
                   background: "#fff", border: "1px solid rgba(0,0,0,0.08)",
                   borderRadius: "var(--r-md)", padding: "8px 16px",
                   boxShadow: "0 8px 30px rgba(0,0,0,0.07)",
+                  zIndex: 10
                 }}
               >
                 <p style={{ fontSize: "0.65rem", color: "var(--text-4)", fontFamily: "var(--font-mono)" }}>const dev =</p>
