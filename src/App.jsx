@@ -32,7 +32,7 @@ function useScrollReveal() {
             }
           });
         },
-        { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
+        { threshold: 0.12, rootMargin: "0px 0px -60px 0px" },
       );
       els.forEach((el) => obs.observe(el));
       return obs;
@@ -42,7 +42,7 @@ function useScrollReveal() {
     let obs = revealEls();
 
     // Re-observe after lazy-loaded components mount
-    const mutObs = new MutationObserver(() => {
+    const mutObs = new MbạnutationObserver(() => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         obs.disconnect();

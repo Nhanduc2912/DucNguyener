@@ -86,10 +86,6 @@ function AnimeHead({ mousePos }) {
 
       {/* ── GLASSES — use boxes, not torus ── */}
       {/* Left lens frame (4 thin boxes forming a rectangle) */}
-      <mesh position={[-0.185, 0.08, 0.56]} scale={[0.32, 0.36, 0.01]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#0a0a0a" transparent opacity={0.0} />
-      </mesh>
       {/* Left frame outline - top */}
       <mesh position={[-0.185, 0.175, 0.56]} scale={[0.31, 0.022, 0.01]}>
         <boxGeometry />

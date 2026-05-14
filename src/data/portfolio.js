@@ -243,9 +243,10 @@ export const CERTIFICATES = [
     title: "Thực tập tại Bảo Tàng Đà Nẵng",
     issuer: "Bảo Tàng Đà Nẵng",
     year: "2026",
-    description: "Thực tập kỹ sư phần mềm tại Bảo Tàng Đà Nẵng từ tháng 5 đến tháng 7 năm 2026. Tham gia phát triển và duy trì hệ thống thông tin của bảo tàng.",
+    description: "Thực tập kỹ sư phần mềm tại Bảo Tàng Đà Nẵng từ 11/05/2026 đến 19/07/2026. Tham gia phát triển và duy trì hệ thống thông tin của bảo tàng.",
     icon: "emojione:classical-building",
     color: "#10b981",
-    badge: "💼 Internship · 05/2026 – 07/2026",
+    badge: "💼 Internship · 11/05/2026 – 19/07/2026",
   },
 ];
+;

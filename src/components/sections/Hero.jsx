@@ -50,7 +50,7 @@ export default function Hero() {
             <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}
               style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 14px", borderRadius: "var(--r-full)", border: "1px solid rgba(0,0,0,0.1)", background: "rgba(0,0,0,0.02)", fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "var(--text-2)", alignSelf: "flex-start" }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#16a34a", display: "inline-block", animation: "blink 2s ease-in-out infinite" }} />
-              Thực tập tại Bảo Tàng Đà Nẵng · 05–07/2026
+              Thực tập tại Bảo Tàng Đà Nẵng · 11/05–19/07/2026
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
