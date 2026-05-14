@@ -4,7 +4,7 @@ import { Html } from "@react-three/drei";
 import { Icon } from "@iconify/react";
 import { TECH_STACK } from "../../data/portfolio";
 
-// TechNode optimized to prevent extreme lag from 30+ <Html> DOM nodes syncing every frame.
+// Always-visible node with icon
 function TechNode({ tech, position }) {
   const groupRef = useRef();
   const [hovered, setHovered] = useState(false);
@@ -18,21 +18,14 @@ function TechNode({ tech, position }) {
   return (
     <group ref={groupRef} position={position}>
       <mesh
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          setHovered(true);
-          document.body.style.cursor = 'pointer';
-        }}
-        onPointerOut={(e) => {
-          setHovered(false);
-          document.body.style.cursor = 'default';
-        }}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
         onClick={() => window.open(tech.url, "_blank", "noreferrer")}
-        scale={hovered ? 1.4 : 1}
+        scale={hovered ? 1.3 : 1}
       >
         <sphereGeometry args={[0.15, 12, 12]} />
         <meshStandardMaterial
-          color={hovered ? "#0a0a0a" : "#cbd5e1"}
+          color={hovered ? "#0a0a0a" : "#e8e8e8"}
           roughness={0.4}
           metalness={0.2}
           transparent
@@ -40,29 +33,59 @@ function TechNode({ tech, position }) {
         />
       </mesh>
 
-      {/* Only render Html when hovered for massive performance boost */}
-      {hovered && (
-        <Html center style={{ pointerEvents: "none", userSelect: "none" }}>
+      {/* Always-visible icon label */}
+      <Html center style={{ pointerEvents: "none", userSelect: "none" }}>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+          transform: "translateY(-34px)",
+          opacity: hovered ? 0 : 1,
+          transition: "opacity 0.2s",
+        }}>
           <div style={{
-            transform: "translateY(-35px)",
+            background: "rgba(255,255,255,0.92)",
+            border: "1px solid rgba(0,0,0,0.1)",
+            borderRadius: 8,
+            padding: "4px 6px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+            boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+            backdropFilter: "blur(8px)",
+          }}>
+            <Icon icon={tech.icon} width={16} height={16} />
+            <span style={{ fontSize: 9, fontWeight: 600, color: "#0a0a0a", fontFamily: "Space Grotesk, sans-serif", whiteSpace: "nowrap" }}>
+              {tech.name}
+            </span>
+          </div>
+        </div>
+
+        {/* Hovered tooltip */}
+        {hovered && (
+          <div style={{
+            transform: "translateY(-42px)",
             background: "#0a0a0a",
             color: "#fff",
             borderRadius: 8,
-            padding: "6px 12px",
-            fontSize: 12,
+            padding: "5px 12px",
+            fontSize: 11,
             fontWeight: 600,
             whiteSpace: "nowrap",
-            fontFamily: "var(--font-main)",
+            fontFamily: "Space Grotesk, sans-serif",
             display: "flex",
             alignItems: "center",
-            gap: 6,
-            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+            gap: 5,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
+            cursor: "pointer",
           }}>
-            <Icon icon={tech.icon} width={14} height={14} />
-            {tech.name}
+            <Icon icon={tech.icon} width={12} height={12} />
+            {tech.name} →
           </div>
-        </Html>
-      )}
+        )}
+      </Html>
     </group>
   );
 }
@@ -115,12 +138,7 @@ function GlobeScene({ techs }) {
 
 export default function TechGlobe({ techs = TECH_STACK }) {
   return (
-    <Canvas 
-      camera={{ position: [0, 0, 7], fov: 50 }} 
-      style={{ background: "transparent", width: "100%", height: "100%" }} 
-      gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
-      dpr={[1, 1.5]}
-    >
+    <Canvas camera={{ position: [0, 0, 7], fov: 50 }} style={{ background: "transparent", width: "100%", height: "100%" }} gl={{ alpha: true, antialias: true }}>
       <ambientLight intensity={2} />
       <directionalLight position={[5, 5, 5]} intensity={1.5} />
       <GlobeScene techs={techs} />
