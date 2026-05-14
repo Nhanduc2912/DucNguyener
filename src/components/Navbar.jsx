@@ -27,9 +27,8 @@ export default function Navbar({ active }) {
     >
       <div className="navbar-inner">
         {/* Logo */}
-        <a href="#about" onClick={(e) => go(e, "#about")}
-          style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "0.95rem", color: "var(--text-1)", letterSpacing: "0.06em" }}>
-          Ducnguyener
+        <a href="#about" onClick={(e) => go(e, "#about")} style={{ display: "flex", alignItems: "center" }}>
+          <img src="/logo.png" alt="DucNguyener Logo" style={{ height: "32px", width: "auto" }} />
         </a>
 
         {/* Desktop links */}

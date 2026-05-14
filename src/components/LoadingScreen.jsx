@@ -87,16 +87,17 @@ export default function LoadingScreen({ onComplete }) {
               style={{
                 width: 72,
                 height: 72,
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #0ea5e9, #8b5cf6)",
+                margin: "0 auto 1.5rem",
+                boxShadow: "0 0 40px rgba(14,165,233,0.4)",
+                borderRadius: "16px", // adjust radius if logo is square
+                overflow: "hidden",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: "0 auto 1.5rem",
-                boxShadow: "0 0 40px rgba(14,165,233,0.4)",
+                background: "#000" // Black background matching the logo content
               }}
             >
-              <span style={{ color: "#fff", fontWeight: 900, fontSize: "1.5rem", fontFamily: "Outfit, sans-serif" }}>D</span>
+              <img src="/logo.png" alt="Loading Logo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </motion.div>
 
             {/* Scrambled name */}
