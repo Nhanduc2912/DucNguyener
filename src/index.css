@@ -229,13 +229,13 @@ a { text-decoration: none; color: inherit; }
 .blob { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; animation: blob 10s ease-in-out infinite; }
 
 /* NAVBAR RESPONSIVE UTILS */
-.desktop-menu { display: flex; align-items: center; gap: 0.25rem; }
-.mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.4rem; flex-direction: column; gap: 4px; }
+.mobile-header { display: none !important; }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
   :root { --section-py: 3.5rem; }
   .navbar { display: none !important; }
+  .mobile-header { display: flex !important; }
   .avatar-wrapper { width: 240px; height: 240px; }
   .tech-globe-container { height: 360px; }
 }

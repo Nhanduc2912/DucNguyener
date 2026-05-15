@@ -105,6 +105,7 @@ export default function App() {
             animate={{ opacity: 1, transition: { duration: 0.5 } }}
             exit={{ opacity: 0 }}
           >
+            <MobileHeader />
             <Navbar active={activeLink} />
             <main>
               <Hero />
@@ -117,6 +118,10 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+    </>
+  );
+}
+Presence>
     </>
   );
 }
