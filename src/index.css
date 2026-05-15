@@ -228,9 +228,17 @@ a { text-decoration: none; color: inherit; }
 @keyframes blob { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(14px,-20px) scale(1.03)} 66%{transform:translate(-10px,14px) scale(0.97)} }
 .blob { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; animation: blob 10s ease-in-out infinite; }
 
+/* NAVBAR RESPONSIVE UTILS */
+.desktop-menu { display: flex; align-items: center; gap: 0.25rem; }
+.mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.4rem; flex-direction: column; gap: 4px; }
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   :root { --section-py: 3.5rem; }
+  .navbar { width: calc(100% - 2rem); }
+  .navbar-inner { padding: 0.6rem 1rem; }
+  .desktop-menu { display: none !important; }
+  .mobile-toggle { display: flex !important; }
   .avatar-wrapper { width: 240px; height: 240px; }
   .tech-globe-container { height: 360px; }
 }

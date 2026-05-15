@@ -32,7 +32,7 @@ export default function Navbar({ active }) {
         </a>
 
         {/* Desktop links */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }} className="hidden md:flex">
+        <div className="desktop-menu">
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href} onClick={(e) => go(e, link.href)}
               style={{
@@ -48,8 +48,7 @@ export default function Navbar({ active }) {
         </div>
 
         {/* Mobile toggle */}
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden"
-          style={{ background: "none", border: "none", cursor: "pointer", padding: "0.4rem", display: "flex", flexDirection: "column", gap: "4px" }}>
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="mobile-toggle">
           {[0, 1, 2].map((i) => (
             <span key={i} style={{
               display: "block", width: "20px", height: "1.5px", background: "var(--text-1)", borderRadius: "2px",
@@ -70,17 +69,18 @@ export default function Navbar({ active }) {
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.22 }}
             style={{
-              marginTop: "0.6rem", background: "rgba(255,255,255,0.95)",
+              marginTop: "0.6rem", background: "rgba(255,255,255,0.98)",
               backdropFilter: "blur(20px)", borderRadius: "var(--r-lg)",
-              border: "1px solid rgba(0,0,0,0.07)", padding: "1rem",
+              border: "1px solid rgba(0,0,0,0.07)", padding: "0.5rem",
               display: "flex", flexDirection: "column", gap: "0.2rem",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
             }}
           >
             {NAV_LINKS.map((link) => (
               <a key={link.href} href={link.href} onClick={(e) => go(e, link.href)}
                 style={{
-                  padding: "0.65rem 1rem", borderRadius: "var(--r-md)",
-                  fontSize: "0.9rem", fontWeight: 500,
+                  padding: "0.85rem 1rem", borderRadius: "var(--r-md)",
+                  fontSize: "1rem", fontWeight: 500, textAlign: "center",
                   color: active === link.href ? "var(--text-1)" : "var(--text-3)",
                   background: active === link.href ? "rgba(0,0,0,0.05)" : "transparent",
                 }}
