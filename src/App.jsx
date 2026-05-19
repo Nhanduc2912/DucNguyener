@@ -6,6 +6,7 @@ import { NAV_LINKS } from "./data/portfolio";
 import LoadingScreen from "./components/LoadingScreen";
 import CustomCursor from "./components/CustomCursor";
 import Navbar from "./components/Navbar";
+import MobileHeader from "./components/MobileHeader";
 import EasterEgg from "./components/EasterEgg";
 
 import Hero from "./components/sections/Hero";
@@ -118,10 +119,6 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
-  );
-}
-Presence>
     </>
   );
 }
