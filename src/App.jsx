@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { AnimatePresence, m, LazyMotion, domAnimation, useReducedMotion } from "framer-motion";
 import { useLenis } from "./hooks/useLenis";
 import { NAV_LINKS } from "./data/portfolio";
 
@@ -90,7 +90,7 @@ export default function App() {
   }, []);
 
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       <CustomCursor />
       <EasterEgg />
 
@@ -100,7 +100,7 @@ export default function App() {
 
       <AnimatePresence>
         {!loading && (
-          <motion.div
+          <m.div
             key="main"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { duration: 0.5 } }}
@@ -116,9 +116,9 @@ export default function App() {
               <Certificates />
               <Contact />
             </main>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
-    </>
+    </LazyMotion>
   );
 }

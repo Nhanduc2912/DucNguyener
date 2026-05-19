@@ -53,13 +53,13 @@ export default function LoadingScreen({ onComplete }) {
           className="loading-screen"
           exit={{ opacity: 0, scale: 1.02 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
-          style={{ zIndex: 10000, background: "var(--bg)", color: "var(--text-1)" }}
+          style={{ zIndex: 100, background: "var(--bg)", color: "var(--text-1)" }}
         >
           <div style={{ textAlign: "center", position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
             {/* Logo mark */}
             <motion.div
-              initial={{ scale: 0, rotate: -10 }}
-              animate={{ scale: 1, rotate: 0 }}
+              initial={{ scale: 0.95, opacity: 0, rotate: -10 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
               style={{
                 width: 64,
@@ -85,7 +85,7 @@ export default function LoadingScreen({ onComplete }) {
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: "1.75rem",
-                fontWeight: 800,
+                fontWeight: 600,
                 color: "var(--text-1)",
                 marginBottom: "0.4rem",
               }}
