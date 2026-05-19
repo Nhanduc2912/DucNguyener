@@ -39,7 +39,6 @@ export function useTextScramble(finalText, trigger = true, speed = 30) {
 }
 
 export function useTypingEffect(words, speed = 80, pause = 2000) {
-  const [display, setDisplay] = useState("");
   const [wordIdx, setWordIdx] = useState(0);
   const [charIdx, setCharIdx] = useState(0);
   const [deleting, setDeleting] = useState(false);
@@ -55,13 +54,15 @@ export function useTypingEffect(words, speed = 80, pause = 2000) {
     } else if (deleting && charIdx > 0) {
       timeout = setTimeout(() => setCharIdx((c) => c - 1), speed / 2);
     } else if (deleting && charIdx === 0) {
-      setDeleting(false);
-      setWordIdx((i) => (i + 1) % words.length);
+      timeout = setTimeout(() => {
+        setDeleting(false);
+        setWordIdx((i) => (i + 1) % words.length);
+      }, speed);
     }
 
-    setDisplay(current.slice(0, charIdx));
     return () => clearTimeout(timeout);
   }, [charIdx, deleting, wordIdx, words, speed, pause]);
 
-  return display;
+  const current = words[wordIdx];
+  return current ? current.slice(0, charIdx) : "";
 }
