@@ -49,8 +49,8 @@ export default function Navbar({ active }) {
 
         {/* Mobile toggle */}
         <button onClick={() => setMobileOpen(!mobileOpen)} className="mobile-toggle">
-          {[0, 1, 2].map((i) => (
-            <span key={i} style={{
+          {["top", "mid", "bot"].map((line, i) => (
+            <span key={line} style={{
               display: "block", width: "20px", height: "1.5px", background: "var(--text-1)", borderRadius: "2px",
               transform: mobileOpen ? (i === 0 ? "rotate(45deg) translate(4px,4px)" : i === 1 ? "scaleX(0)" : "rotate(-45deg) translate(4px,-4px)") : "none",
               opacity: mobileOpen && i === 1 ? 0 : 1,

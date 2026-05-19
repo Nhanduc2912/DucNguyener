@@ -129,8 +129,8 @@ function GlobeScene({ techs }) {
         <sphereGeometry args={[2.65, 28, 28]} />
         <meshStandardMaterial color="#0a0a0a" wireframe transparent opacity={0.05} />
       </mesh>
-      {techs.map((tech, i) => (
-        <TechNode key={tech.name} tech={tech} position={positions[i]} />
+      {techs.map((tech) => (
+        <TechNode key={tech.name} tech={tech} position={positions[techs.indexOf(tech)]} />
       ))}
     </group>
   );

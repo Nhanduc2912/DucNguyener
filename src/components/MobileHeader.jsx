@@ -30,10 +30,8 @@ export default function MobileHeader() {
         </span>
       </div>
       
-      <a 
-        href="#contact"
-        onClick={(e) => {
-          e.preventDefault();
+      <button 
+        onClick={() => {
           document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
         }}
         style={{
@@ -46,12 +44,13 @@ export default function MobileHeader() {
           fontSize: "0.75rem",
           fontWeight: 600,
           fontFamily: "var(--font-main)",
-          textDecoration: "none",
+          border: "none",
+          cursor: "pointer",
           boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
         }}
       >
         Liên hệ
-      </a>
+      </button>
     </motion.header>
   );
 }
