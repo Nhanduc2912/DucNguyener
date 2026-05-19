@@ -69,7 +69,7 @@ export default function TechStack() {
           </motion.div>
         )}
         {view === "globe" && (
-          <p style={{ textAlign: "center", color: "var(--text-4)", fontSize: "0.72rem", marginTop: "0.75rem", fontFamily: "var(--font-mono)" }}>
+          <p style={{ textAlign: "center", color: "var(--text-4)", fontSize: "0.8rem", marginTop: "0.75rem", fontFamily: "var(--font-mono)" }}>
             Kéo để xoay · Click vào node để mở trang chính thức
           </p>
         )}
@@ -91,7 +91,7 @@ export default function TechStack() {
                   data-cursor-hover
                 >
                   <Icon icon={tech.icon} width={26} height={26} />
-                  <span style={{ fontSize: "0.72rem", fontWeight: 500, fontFamily: "var(--font-main)", textAlign: "center", lineHeight: 1.2 }}>
+                  <span style={{ fontSize: "0.8rem", fontWeight: 500, fontFamily: "var(--font-main)", textAlign: "center", lineHeight: 1.2 }}>
                     {tech.name}
                   </span>
                 </motion.a>

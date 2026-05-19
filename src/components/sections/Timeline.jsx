@@ -106,7 +106,7 @@ export default function Timeline() {
                 {i < TIMELINE.length - 1 && <div style={{ width: 1, flex: 1, background: "var(--border)", marginTop: 6 }} />}
               </div>
               <div style={{ flex: 1, paddingBottom: "1rem" }}>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--text-3)", display: "block", marginBottom: "0.4rem" }}>{item.year}</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "var(--text-3)", display: "block", marginBottom: "0.4rem" }}>{item.year}</span>
                 <TimelineContent item={item} />
               </div>
             </div>

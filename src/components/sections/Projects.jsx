@@ -75,7 +75,7 @@ export default function Projects() {
                   <span key={t} style={{
                     padding: "0.28rem 0.8rem", borderRadius: "var(--r-full)",
                     border: "1px solid rgba(255,255,255,0.15)",
-                    fontSize: "0.72rem", fontWeight: 500, fontFamily: "var(--font-mono)",
+                    fontSize: "0.8rem", fontWeight: 500, fontFamily: "var(--font-mono)",
                     color: "rgba(255,255,255,0.55)",
                   }}>{t}</span>
                 ))}
@@ -105,7 +105,7 @@ export default function Projects() {
               </div>
               <p style={{ color: "var(--text-3)", fontSize: "0.875rem", lineHeight: 1.7, flex: 1 }}>{p.description}</p>
               <div>
-                <p style={{ color: "var(--text-4)", fontSize: "0.72rem", fontFamily: "var(--font-mono)", marginBottom: "0.6rem" }}>{p.stat}</p>
+                <p style={{ color: "var(--text-4)", fontSize: "0.8rem", fontFamily: "var(--font-mono)", marginBottom: "0.6rem" }}>{p.stat}</p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
                   {p.tags.slice(0, 4).map((t) => <span key={t} className="tag">{t}</span>)}
                 </div>
